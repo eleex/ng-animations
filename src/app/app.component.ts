@@ -6,8 +6,11 @@ import {
   transition,
   animate,
   group,
-  sequence,
+  query,
+  keyframes,
+  useAnimation,
 } from '@angular/animations';
+import { bounce, rotateOut, fadeInLeft, rollIn } from 'ng-animate';
 
 @Component({
   selector: 'app-root',
@@ -26,10 +29,13 @@ import {
       ),
       transition('start <=> end', animate(1000)),
       transition('special <=> *', [
-        style({ backgroundColor: 'black' }),
-        // Анимации запускаются одна за одной после её выполнения
-        // По умолчанию стоит метод sequence
-        animate(3000, style({ backgroundColor: 'red' })),
+        group([
+          query('.box-title', animate(1000, style({ color: 'pink' }))),
+          style({ backgroundColor: 'black' }),
+          // Анимации запускаются одна за одной после её выполнения
+          // По умолчанию стоит метод sequence
+          animate(2000, style({ backgroundColor: 'red' })),
+        ]),
         animate(1000),
       ]),
     ]),
@@ -37,8 +43,17 @@ import {
     trigger('visibility', [
       // void => *
       transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0)' }),
-        animate(1000),
+        // style({ opacity: 0, transform: 'scale(0)' }),
+        // animate(1000),
+        animate(
+          '4s',
+          keyframes([
+            style({ backgroundColor: 'red', offset: 0.2 }),
+            style({ backgroundColor: 'green', offset: 0.3 }),
+            style({ backgroundColor: 'yellow', offset: 0.4 }),
+            style({ backgroundColor: 'pink', offset: 0.9 }),
+          ])
+        ),
       ]),
       // * => void
       transition(':leave', [
@@ -51,10 +66,16 @@ import {
         ]),
       ]),
     ]),
+    trigger('bounce', [
+      transition('* => rotate', useAnimation(rotateOut)),
+      transition('* => rollIn', useAnimation(rollIn)),
+      transition(':enter', useAnimation(fadeInLeft)),
+    ]),
   ],
 })
 export class AppComponent {
   boxState = 'start';
+  animateBoxState: string;
   visible = true;
 
   toggleAnimate(): void {
@@ -67,5 +88,25 @@ export class AppComponent {
 
   toggleVisibility(): void {
     this.visible = !this.visible;
+  }
+
+  animationStarter(event: AnimationEvent): void {
+    console.log('Animation Started: ', event);
+  }
+
+  animationDone(event: AnimationEvent): void {
+    console.log('Animation Done: ', event);
+  }
+
+  bounceDone(): void {
+    this.animateBoxState = '';
+  }
+
+  rotateBox(): void {
+    this.animateBoxState = 'rotate';
+  }
+
+  rollInBox(): void {
+    this.animateBoxState = 'rollIn';
   }
 }

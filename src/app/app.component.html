@@ -12,8 +12,10 @@
     <div
       class="box mt-3 d-flex justify-content-center align-items-center"
       [@box]="boxState"
+      (@box.start)="animationStarter($event)"
+      (@box.done)="animationDone($event)"
     >
-      <h4 class="m-0">{{ boxState }}</h4>
+      <h4 class="box-title m-0">{{ boxState }}</h4>
     </div>
   </div>
   <div class="row flex-column justify-content-center align-items-center">
@@ -27,5 +29,20 @@
     >
       <h4 class="m-0">visible</h4>
     </div>
+  </div>
+  <div class="row justify-content-center flex-column align-items-center">
+    <div>
+      <button class="btn btn-danger m-3" type="button" (click)="rotateBox()">
+        ng-animate rotateOut
+      </button>
+      <button class="btn btn-danger m-3" type="button" (click)="rollInBox()">
+        ng-animate roll-in-box
+      </button>
+    </div>
+    <div
+      class="animate-box"
+      [@bounce]="animateBoxState"
+      (@bounce.done)="bounceDone()"
+    ></div>
   </div>
 </div>
